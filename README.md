@@ -19,7 +19,7 @@ upgrade.bat & upgrade_all.bat:
 are two batch files that run under window and are useful for upgrading all the
 installed programs under that s.o.
 the first needs confirmation between each package upgrade
-the second can be launched unde administrator privileges and runs alone without
+the second can be launched under administrator privileges and runs alone without
 the needs of any confirmation until all the packages should be installed.
 
 zp_subfolders.py
