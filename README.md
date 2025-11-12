@@ -9,10 +9,10 @@ get-pip.py:
 
 simply installs the 'pip' tool that is an achronym for 'packages installer python'.
 
-upgrade-pip-packages.bat:
+update-pip.py & upgrade-pip-packages.bat:
 
-is a batch file that runs under windows and is useful for upgrading all the pip
-packages you have already installed.
+are two tools, the first can be launched by python and the second that runs under windows
+,being a .bat file, and are useful for upgrading all the outdated pip packages.
 
 upgrade.bat & upgrade_all.bat:
 
