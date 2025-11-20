@@ -1,12 +1,15 @@
 # --------------------------------------------------------
 # unzip.py : script python per scompattare un file zippato
 # --------------------------------------------------------
+<<<<<<< HEAD
 #
 # example:
 #
 #  py .\unzip.py .\HT123456_Report_TPS_Ballò_20251114.xlsx .\unzipped-report\
 #
 # --------------------------------------------------------
+=======
+>>>>>>> 629dc81359e8f69526ae4cc232bc7a7c6208a9f4
 
 import zipfile, os, argparse
 
