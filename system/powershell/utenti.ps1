@@ -1,0 +1,1 @@
+Get-ADUser -Filter * -Properties DisplayName, EmailAddress, Title | Select-Object -Property @{Name="Nome"; Expression = {$_.displayname}},@{Name="Indirizzo e-mail"; Expression = {$_.emailaddress}},@{Name="Account"; Expression ={$_.samaccountname}},@{Name="Stato"; Expression = {$_.enabled}}| where {($_."Indirizzo e-mail") -and ($_."Nome")}|Sort-Object Nome

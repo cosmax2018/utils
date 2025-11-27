@@ -1,0 +1,1 @@
+Get-ADUser -Filter * -Properties LastLogonDate | ? { $_.LastLogonDate -eq $null } | Select name,samaccountname
