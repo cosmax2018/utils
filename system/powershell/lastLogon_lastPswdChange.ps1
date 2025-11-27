@@ -1,0 +1,1 @@
+get-aduser -filter * -properties LastLogonTimestamp, LogonCount, PasswordExpired, PasswordLastSet, PasswordNeverExpires | sort Name | ft Name, LastLogonTimestamp, LogonCount, PasswordExpired, PasswordLastSet, PasswordNeverExpires

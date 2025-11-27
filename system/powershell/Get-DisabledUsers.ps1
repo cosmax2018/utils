@@ -1,0 +1,1 @@
+Get-ADUser -Filter * -Property Enabled | Where-Object {$_.Enabled -like 'false'} | FT Name, Enabled -Autosize
