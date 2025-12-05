@@ -1,3 +1,13 @@
+
+# VERSIONE SEMPLICE — Python (WMI) per leggere LA VELOCITÀ della rete
+# da ogni PC del dominio
+
+# Richiede i privilegi di domain admin.
+
+# richiede:
+#    pip install wmi
+
+
 import subprocess
 import wmi
 import csv

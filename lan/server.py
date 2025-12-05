@@ -1,3 +1,11 @@
+
+# Da lanciare su un PC della rete (anche lo stesso PC se vuoi test locale).
+
+# uso:
+# avvia il server   > python server.py
+
+# Modifica SERVER_IP nel client con l’IP del server.
+
 import socket
 import time
 
