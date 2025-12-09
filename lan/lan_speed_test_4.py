@@ -1,0 +1,50 @@
+import uuid
+import subprocess
+import wmi
+
+def get_mac_address():
+    mac_num = uuid.getnode()
+    mac = ":".join([f"{(mac_num >> ele) & 0xff:02x}" for ele in range(40, -1, -8)])
+    return mac.upper()
+
+def get_serial_number():
+    try:
+        result = subprocess.check_output(["wmic", "bios", "get", "serialnumber"], shell=True)
+        return result.decode().split("\n")[1].strip()
+    except:
+        return "N/D"
+
+def get_lan_speed_docking_safe():
+    c = wmi.WMI()
+
+    # Parole chiave da escludere (virtuali, wifi, loopback)
+    blacklist = ["wifi", "wireless", "wlan", "virtual", "vmware",
+                 "hyper-v", "bluetooth", "loopback", "ndis"]
+
+    for nic in c.Win32_NetworkAdapter():
+
+        name = (nic.Name or "").lower()
+
+        # Skip se il nome contiene qualcosa da escludere
+        if any(bad in name for bad in blacklist):
+            continue
+
+        # Controllo: tipo Ethernet = InterfaceType 6
+        if nic.InterfaceType != 6:
+            continue
+
+        # Deve essere connessa
+        if nic.NetConnectionStatus != 2:  # 2 = Connected
+            continue
+
+        # Velocità disponibile
+        if nic.Speed:
+            speed_mbps = int(nic.Speed) / 1_000_000
+            return f"{speed_mbps} Mbps"
+
+    return "Nessuna LAN attiva trovata"
+
+if __name__ == "__main__":
+    print("MAC Address:", get_mac_address())
+    print("Serial Number:", get_serial_number())
+    print("Velocità LAN:", get_lan_speed_docking_safe())
