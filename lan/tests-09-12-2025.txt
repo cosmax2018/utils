@@ -1,0 +1,163 @@
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.27
+  MAC Docking: 48-2A-E3-5B-00-30
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 5
+  Descrizione: Realtek USB GbE Family Controller #2
+  IP address :
+  MAC Docking: F4-A8-0D-12-10-10
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 5
+  Descrizione: Realtek USB GbE Family Controller #2
+  IP address : 172.21.11.10
+  MAC Docking: F4-A8-0D-12-10-10
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address :
+  MAC Docking: 48-2A-E3-5B-0F-C9
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 9
+  Descrizione: Lenovo USB Ethernet #3
+  IP address : 172.21.11.25
+  MAC Docking: 3C-E1-A1-BD-7B-32
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.19
+  MAC Docking: 48-2A-E3-5B-02-99
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.7
+  MAC Docking: 48-2A-E3-95-43-1A
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.9
+  MAC Docking: 48-2A-E3-76-92-4A
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.22
+  MAC Docking: 48-2A-E3-77-3C-A8
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.14
+  MAC Docking: 48-2A-E3-8C-B1-F5
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.15
+  MAC Docking: 48-2A-E3-5B-08-7E
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 10
+  Descrizione: Realtek USB GbE Family Controller #3
+  IP address : 172.21.11.17
+  MAC Docking: 34-29-8F-75-F2-67
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 10
+  Descrizione: Realtek USB GbE Family Controller #3
+  IP address : 172.21.11.20
+  MAC Docking: 34-29-8F-77-39-B0
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 5
+  Descrizione: Realtek USB GbE Family Controller #2
+  IP address : 172.21.11.11
+  MAC Docking: F4-A8-0D-3B-86-8B
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.26
+  MAC Docking: 48-2A-E3-95-8F-47
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address :
+  MAC Docking: F4-A8-0D-05-B4-0E
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address : 172.21.11.8
+  MAC Docking: 48-2A-E3-95-56-AB
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
+
+LAN rilevata:
+  Interfaccia: Ethernet 2
+  Descrizione: Lenovo USB Ethernet
+  IP address :
+  MAC Docking: 48-2A-E3-9F-D5-3F
+  MAC PC     : 9C-2D-CD-2F-7D-7E
+  Serial PC  : PC2JL8SN
+  VelocitÃ    : 1 Gbps
