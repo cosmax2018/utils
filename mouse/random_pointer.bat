@@ -1,0 +1,1 @@
+python ./random-pointer.py
