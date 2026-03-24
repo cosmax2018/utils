@@ -1,29 +1,35 @@
+#
+# pdf2word.py :   conversione .pdf -> .docx
+#                 conserva la formattazione e le tabelle
+import os,sys
+from pdf2docx import Converter
 
-# pdf2doc.py : conversione .pdf -> .docx
+def converti(file_path):  
+    # converte da .pdf a .docx
+    #
+    # utilizzo:  > from pdf2word import converti
+    #            > converti("C:\Users\ITMACOS\pippo.pdf")
+    #
+    # oppure:    > py pdf2word.py C:\Users\ITMACOS\pippo.pdf
+    #
+    file_path = file_path[0]
+    print(f"Conversione di {file_path}")
+    file_name = os.path.basename(file_path)                                  # pippo.pdf
+    file_name_without_ext = os.path.splitext(file_name)[0]                   # pippo
+    
+    folder_path = os.path.dirname(file_path)                                 # "C:\Users\ITMACOS\"
+    output_file = os.path.join(folder_path, file_name_without_ext + ".docx") # pippo.docx
+    
+    # Crea il convertitore
+    cv = Converter(file_name)
 
-import pdfplumber
-from docx import Document
+    # Converti tutto il PDF in Word
+    cv.convert(output_file, start=0, end=None)  # start e end sono gli indici delle pagine
 
-# Percorso del file PDF di input
-pdf_path = input("File .pdf: ") # es. "input.pdf"
-# Percorso del file Word di output
-docx_path = "output.docx"   # l'output viene rinominato cosi'
+    # Chiudi il convertitore
+    cv.close()
 
-# Crea un nuovo documento Word
-doc = Document()
+    print(f"Conversione completata! File salvato come {output_file}")
 
-# Apri il PDF
-with pdfplumber.open(pdf_path) as pdf:
-    for page in pdf.pages:
-        # Estrai il testo dalla pagina
-        text = page.extract_text()
-        if text:
-            # Aggiungi il testo al documento Word
-            doc.add_paragraph(text)
-            # Aggiungi una pagina nuova (opzionale)
-            doc.add_page_break()
-
-# Salva il documento Word
-doc.save(docx_path)
-
-print(f"Conversione completata! File salvato come {docx_path}")
+if __name__ == "__main__":
+    converti(sys.argv[1:])
