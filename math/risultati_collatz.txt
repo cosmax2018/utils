@@ -1,0 +1,22 @@
+7345,		163,	23,15,17,12,9,19,20,7,16,4,2,1
+7890,		101,	25,23,15,17,12,9,19,20,7,16,4,2,1
+670234,		110,113,12,9,19,20,7,16,4,2,1
+9260356,	163,	23,15,17,12,9,19,20,7,16,4,2,1
+1234567890,	351,81, 22,15,17,12,9,19,20,7,16,4,2,1
+10987654321,	287,42, 8,3,7,16,4,2,1
+10987654320,	274,91,92,17,12,9,19,20,7,16,4,2,1
+999999999,	361,45,16,4,2,1
+1000000000,	100,25,23,15,17,12,9,19,20,7,16,4,2,1
+10000000000,	124,108,113,12,9,19,20,7,16,4,2,1
+3456,		118,33,26,10,6,8,3,7,16,4,2,1
+
+
+procedura:
+
+1.si sceglie un numero di partenza qualsiasi
+2.si applica l'algoritmo di convergenza a 1 di Collatz
+  contando i passi (a partire dal passo numero zero)
+  necessari per la convergenza a 1
+3.si prende il numero di passi risultante e si ripete
+  la procedura ritornando al passo 2.
+ 
