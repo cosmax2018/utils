@@ -2,6 +2,13 @@
 
 --------------------------------------------------------------
 
+	requirements:
+	
+		> pip install pdf2docx, docx2pdf
+		
+		
+--------------------------------------------------------------
+
 	pdf2word.py :   conversione .pdf -> .docx
 
 		converte da .pdf a .docx
@@ -24,7 +31,7 @@
 
 --------------------------------------------------------------
 
-oppure usare l'interfaccia a finestre lanciando
+	oppure usare l'interfaccia a finestre lanciando
 
 		   > py ./interface.py
 		   

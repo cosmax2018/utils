@@ -2,6 +2,7 @@
 # pdf2word.py :   conversione .pdf -> .docx
 #                 conserva la formattazione e le tabelle
 import os,sys
+from pathlib import Path
 from pdf2docx import Converter
 
 def converti(file_path):  
@@ -12,19 +13,22 @@ def converti(file_path):
     #
     # oppure:    > py pdf2word.py C:\Users\ITMACOS\pippo.pdf
     #
-    file_path = file_path[0]
-    print(f"Conversione di {file_path}")
-    file_name = os.path.basename(file_path)                                  # pippo.pdf
-    file_name_without_ext = os.path.splitext(file_name)[0]                   # pippo
+    file_path = Path(file_path)  # ← IMPORTANTISSIMO
     
-    folder_path = os.path.dirname(file_path)                                 # "C:\Users\ITMACOS\"
-    output_file = os.path.join(folder_path, file_name_without_ext + ".docx") # pippo.docx
+    print(f"Conversione di {file_path}")
+    
+    file_name = file_path.name                                      # pippo.pdf
+    file_name_without_ext = file_path.stem                          # pippo    
+    folder_path = file_path.parent                                  # "C:\Users\ITMACOS\"
+    output_file = folder_path / (file_name_without_ext + ".docx")   # pippo.docx
     
     # Crea il convertitore
-    cv = Converter(file_name)
+    # cv = Converter(file_name)
+    cv = Converter(str(file_path))
 
     # Converti tutto il PDF in Word
-    cv.convert(output_file, start=0, end=None)  # start e end sono gli indici delle pagine
+    # cv.convert(output_file, start=0, end=None)  # start e end sono gli indici delle pagine
+    cv.convert(str(output_file), start=0, end=None)
 
     # Chiudi il convertitore
     cv.close()
@@ -32,4 +36,5 @@ def converti(file_path):
     print(f"Conversione completata! File salvato come {output_file}")
 
 if __name__ == "__main__":
-    converti(sys.argv[1:])
+    converti(sys.argv[1])
+    
