@@ -844,10 +844,16 @@ class QRGeneratorApp(tk.Tk):
 
 
 
+        label = self.printer.create_label_image(
+
+            self.current_image,
+
+            self.qr_label.cget("text")
+
+        )
+
         self.clipboard.copy_image(
-
-            self.current_image
-
+            label
         )
 
 
