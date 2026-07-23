@@ -1,204 +1,233 @@
 #
 # history.py
 #
-# Gestione cronologia QR Code
+# Cronologia QR generati
 #
 # Copyright 2026
 #
 
+
 import sqlite3
-from datetime import datetime
-import hashlib
+
+from pathlib import Path
+
+import sys
+
+
+
+############################################################
+
+def application_path():
+
+
+    if getattr(sys, "frozen", False):
+
+        return Path(
+
+            sys.executable
+
+        ).parent
+
+
+    return Path(
+
+        __file__
+
+    ).parent
+
+
+
+
+
+DATA_FOLDER = application_path() / "data"
+
+
+DATA_FOLDER.mkdir(
+
+    exist_ok=True
+
+)
+
+
+
+DB_FILE = DATA_FOLDER / "history.db"
+
+
+
 
 
 class History:
 
-    ############################################################
 
-    def __init__(self, dbname="history.db"):
 
-        self.dbname = dbname
+    ########################################################
 
-        self.conn = sqlite3.connect(self.dbname)
+    def __init__(self):
 
-        self.cursor = self.conn.cursor()
 
-        self.create_table()
+        self.db_file = DB_FILE
 
-    ############################################################
 
-    def create_table(self):
+        self.create_database()
 
-        self.cursor.execute("""
 
-        CREATE TABLE IF NOT EXISTS history(
+
+    ########################################################
+
+    def connect(self):
+
+
+        return sqlite3.connect(
+
+            self.db_file
+
+        )
+
+
+
+    ########################################################
+
+    def create_database(self):
+
+
+        conn = self.connect()
+
+
+        cur = conn.cursor()
+
+
+
+        cur.execute(
+
+        """
+
+        CREATE TABLE IF NOT EXISTS history
+
+        (
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            created TEXT,
+
+            date TEXT,
+
 
             title TEXT,
 
+
             content TEXT,
 
-            sha256 TEXT,
 
-            png TEXT,
+            png TEXT
 
-            pdf TEXT,
-
-            foreground TEXT,
-
-            background TEXT,
-
-            error_level TEXT,
-
-            qr_size INTEGER,
-
-            logo TEXT
 
         )
 
-        """)
+        """
 
-        self.conn.commit()
+        )
 
-    ############################################################
 
-    def add(self,
-            title,
-            content,
-            png="",
-            pdf="",
-            foreground="black",
-            background="white",
-            error_level="H",
-            qr_size=10,
-            logo=""):
 
-        digest = hashlib.sha256(
-            content.encode("utf8")
-        ).hexdigest()
+        conn.commit()
 
-        self.cursor.execute("""
+        conn.close()
 
-        INSERT INTO history(
 
-            created,
+
+    ########################################################
+
+    def add(
+
+            self,
 
             title,
 
             content,
 
-            sha256,
+            png=""
 
-            png,
+    ):
 
-            pdf,
 
-            foreground,
+        conn = self.connect()
 
-            background,
+        cur = conn.cursor()
 
-            error_level,
 
-            qr_size,
 
-            logo
+        cur.execute(
+
+        """
+
+        INSERT INTO history
+
+        (
+
+            date,
+
+            title,
+
+            content,
+
+            png
 
         )
 
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)
+        VALUES
+
+        (
+
+            datetime('now'),
+
+            ?,
+
+            ?,
+
+            ?
+
+        )
 
         """,
 
         (
 
-            datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            ),
-
             title,
 
             content,
 
-            digest,
-
-            png,
-
-            pdf,
-
-            foreground,
-
-            background,
-
-            error_level,
-
-            qr_size,
-
-            logo
-
-        ))
-
-        self.conn.commit()
-
-    ############################################################
-
-    def delete(self,id):
-
-        self.cursor.execute(
-
-            "DELETE FROM history WHERE id=?",
-
-            (id,)
+            png
 
         )
 
-        self.conn.commit()
-
-    ############################################################
-
-    def clear(self):
-
-        self.cursor.execute(
-
-            "DELETE FROM history"
-
         )
 
-        self.conn.commit()
 
-    ############################################################
+        conn.commit()
 
-    def count(self):
+        conn.close()
 
-        self.cursor.execute(
 
-            "SELECT COUNT(*) FROM history"
 
-        )
+    ########################################################
 
-        return self.cursor.fetchone()[0]
+    def get_last(
 
-    ############################################################
+            self,
 
-    def get(self,id):
+            limit=100
 
-        self.cursor.execute(
+    ):
 
-            "SELECT * FROM history WHERE id=?",
 
-            (id,)
+        conn = self.connect()
 
-        )
+        cur = conn.cursor()
 
-        return self.cursor.fetchone()
 
-    ############################################################
 
-    def get_last(self,n=20):
+        cur.execute(
 
-        self.cursor.execute("""
+        """
 
         SELECT *
 
@@ -210,132 +239,19 @@ class History:
 
         """,
 
-        (n,)
-
-        )
-
-        return self.cursor.fetchall()
-
-    ############################################################
-
-    def search(self,text):
-
-        self.cursor.execute("""
-
-        SELECT *
-
-        FROM history
-
-        WHERE
-
-        title LIKE ?
-
-        OR
-
-        content LIKE ?
-
-        ORDER BY id DESC
-
-        """,
-
         (
 
-            "%"+text+"%",
-
-            "%"+text+"%"
+            limit,
 
         )
 
         )
 
-        return self.cursor.fetchall()
 
-    ############################################################
+        rows = cur.fetchall()
 
-    def exists(self,content):
 
-        digest = hashlib.sha256(
+        conn.close()
 
-            content.encode("utf8")
 
-        ).hexdigest()
-
-        self.cursor.execute("""
-
-        SELECT id
-
-        FROM history
-
-        WHERE sha256=?
-
-        """,
-
-        (digest,)
-
-        )
-
-        return self.cursor.fetchone() is not None
-
-    ############################################################
-
-    def export_csv(self,filename):
-
-        import csv
-
-        self.cursor.execute(
-
-            "SELECT * FROM history"
-
-        )
-
-        rows = self.cursor.fetchall()
-
-        with open(
-
-            filename,
-
-            "w",
-
-            newline="",
-
-            encoding="utf8"
-
-        ) as f:
-
-            writer = csv.writer(f)
-
-            writer.writerow([
-
-                "ID",
-
-                "DATA",
-
-                "TITOLO",
-
-                "CONTENUTO",
-
-                "SHA256",
-
-                "PNG",
-
-                "PDF",
-
-                "FG",
-
-                "BG",
-
-                "ERR",
-
-                "SIZE",
-
-                "LOGO"
-
-            ])
-
-            writer.writerows(rows)
-
-    ############################################################
-
-    def close(self):
-
-        self.conn.close()
+        return rows

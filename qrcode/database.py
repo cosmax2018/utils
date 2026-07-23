@@ -1,57 +1,125 @@
 #
 # database.py
 #
-# Database inventario QRGenerator Professional
+# Gestione database inventario SQLite
 #
 # Copyright 2026
 #
 
 import sqlite3
 
-from datetime import datetime
+from pathlib import Path
+import sys
+
+
+
+############################################################
+#
+# percorso applicazione
+#
+############################################################
+
+
+def application_path():
+
+    """
+    Restituisce la cartella dell'applicazione.
+
+    Funziona sia:
+    - da Python
+    - da PyInstaller .exe
+    """
+
+    if getattr(sys, "frozen", False):
+
+        # eseguibile PyInstaller
+
+        return Path(
+            sys.executable
+        ).parent
+
+
+    else:
+
+        # esecuzione normale Python
+
+        return Path(
+            __file__
+        ).parent
+
+
+
+############################################################
+#
+# database path
+#
+############################################################
+
+
+DATA_FOLDER = application_path() / "data"
+
+
+DATA_FOLDER.mkdir(
+
+    exist_ok=True
+
+)
+
+
+
+DB_FILE = DATA_FOLDER / "inventory.db"
+
+
 
 
 
 class InventoryDatabase:
 
 
-    ############################################################
+    ########################################################
 
-    def __init__(
-            self,
-            filename="inventory.db"):
+    def __init__(self):
 
 
-        self.filename = filename
+        self.db_file = DB_FILE
 
 
-        self.conn = sqlite3.connect(
-            self.filename
+        self.create_database()
+
+
+
+    ########################################################
+
+    def connect(self):
+
+
+        return sqlite3.connect(
+
+            self.db_file
+
         )
 
 
-        self.cursor = self.conn.cursor()
+
+    ########################################################
+
+    def create_database(self):
 
 
-        self.create_tables()
+        conn = self.connect()
+
+
+        cur = conn.cursor()
 
 
 
-    ############################################################
-
-    def create_tables(self):
-
-
-        self.cursor.execute(
+        cur.execute(
         """
 
         CREATE TABLE IF NOT EXISTS assets
         (
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-
-            created TEXT,
 
 
             category TEXT,
@@ -66,7 +134,10 @@ class InventoryDatabase:
             serial TEXT UNIQUE,
 
 
-            asset_code TEXT,
+            description TEXT,
+
+
+            purchase_date TEXT,
 
 
             user TEXT,
@@ -75,14 +146,10 @@ class InventoryDatabase:
             department TEXT,
 
 
-            location TEXT,
+            qr_text TEXT,
 
 
-            notes TEXT,
-
-
-            qr_text TEXT
-
+            created TEXT
 
         )
 
@@ -90,60 +157,81 @@ class InventoryDatabase:
         )
 
 
-        self.conn.commit()
+        conn.commit()
+
+        conn.close()
 
 
 
-    ############################################################
+    ########################################################
 
     def add_asset(
+
             self,
+
             category,
+
             brand,
+
             model,
+
             serial,
-            asset_code="",
+
             user="",
+
             department="",
-            location="",
-            notes="",
-            qr_text=""):
+
+            qr_text="",
+
+            description="",
+
+            purchase_date=""
+
+    ):
+
+
+        conn = self.connect()
+
+        cur = conn.cursor()
 
 
 
-        self.cursor.execute(
+        cur.execute(
+
         """
 
         INSERT INTO assets
 
         (
 
-        created,
         category,
+
         brand,
+
         model,
+
         serial,
-        asset_code,
+
+        description,
+
+        purchase_date,
+
         user,
+
         department,
-        location,
-        notes,
-        qr_text
+
+        qr_text,
+
+        created
 
         )
 
-
-        VALUES (?,?,?,?,?,?,?,?,?,?,?)
+        VALUES (?,?,?,?,?,?,?,?,?,datetime('now'))
 
         """,
 
         (
 
-        datetime.now()
-        .strftime(
-            "%Y-%m-%d %H:%M:%S"
-        ),
-
         category,
 
         brand,
@@ -152,15 +240,13 @@ class InventoryDatabase:
 
         serial,
 
-        asset_code,
+        description,
+
+        purchase_date,
 
         user,
 
         department,
-
-        location,
-
-        notes,
 
         qr_text
 
@@ -170,375 +256,149 @@ class InventoryDatabase:
         )
 
 
-        self.conn.commit()
+        conn.commit()
 
+        conn.close()
 
 
-    ############################################################
 
-    def update_asset(
-            self,
-            asset_id,
-            **fields):
-
-
-        allowed = [
-
-            "category",
-
-            "brand",
-
-            "model",
-
-            "serial",
-
-            "asset_code",
-
-            "user",
-
-            "department",
-
-            "location",
-
-            "notes",
-
-            "qr_text"
-
-        ]
-
-
-        values=[]
-
-
-        query=[]
-
-
-
-        for key,value in fields.items():
-
-
-            if key in allowed:
-
-                query.append(
-                    f"{key}=?"
-                )
-
-                values.append(value)
-
-
-
-        if not query:
-
-            return
-
-
-
-        values.append(asset_id)
-
-
-
-        sql = """
-
-        UPDATE assets
-
-        SET
-
-        """
-
-        sql += ",".join(query)
-
-        sql += """
-
-        WHERE id=?
-
-        """
-
-
-
-        self.cursor.execute(
-            sql,
-            values
-        )
-
-
-        self.conn.commit()
-
-
-
-    ############################################################
-
-    def delete_asset(
-            self,
-            asset_id):
-
-
-        self.cursor.execute(
-
-            """
-            DELETE FROM assets
-
-            WHERE id=?
-
-            """,
-
-            (
-                asset_id,
-            )
-
-        )
-
-
-        self.conn.commit()
-
-
-
-    ############################################################
-
-    def get_asset(
-            self,
-            asset_id):
-
-
-        self.cursor.execute(
-
-            """
-
-            SELECT *
-
-            FROM assets
-
-            WHERE id=?
-
-            """,
-
-            (
-                asset_id,
-            )
-
-        )
-
-
-        return self.cursor.fetchone()
-
-
-
-    ############################################################
+    ########################################################
 
     def get_all(self):
 
 
-        self.cursor.execute(
+        conn = self.connect()
 
-            """
+        cur = conn.cursor()
 
-            SELECT *
 
-            FROM assets
+        cur.execute(
 
-            ORDER BY id DESC
-
-            """
+            "SELECT * FROM assets ORDER BY id DESC"
 
         )
 
 
-        return self.cursor.fetchall()
+        rows = cur.fetchall()
+
+
+        conn.close()
+
+
+        return rows
 
 
 
-    ############################################################
+    ########################################################
 
-    def search(
-            self,
-            text):
+    def get_asset(self, asset_id):
 
 
-        value = "%" + text + "%"
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+
+        cur.execute(
+
+            "SELECT * FROM assets WHERE id=?",
+
+            (asset_id,)
+
+        )
+
+
+        row = cur.fetchone()
+
+
+        conn.close()
+
+
+        return row
 
 
 
-        self.cursor.execute(
+    ########################################################
+
+    def find_serial(self, serial):
+
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+
+        cur.execute(
+
+            "SELECT * FROM assets WHERE serial=?",
+
+            (serial,)
+
+        )
+
+
+        row = cur.fetchone()
+
+
+        conn.close()
+
+
+        return row
+
+
+
+    ########################################################
+
+    def search(self, text):
+
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+
+
+        pattern = f"%{text}%"
+
+
+
+        cur.execute(
 
         """
 
-        SELECT *
+        SELECT * FROM assets
 
-        FROM assets
+        WHERE brand LIKE ?
 
+        OR model LIKE ?
 
-        WHERE
+        OR serial LIKE ?
 
-        brand LIKE ?
-
-        OR
-
-        model LIKE ?
-
-        OR
-
-        serial LIKE ?
-
-        OR
-
-        user LIKE ?
-
-        OR
-
-        asset_code LIKE ?
-
-
-        ORDER BY id DESC
-
+        OR user LIKE ?
 
         """,
 
         (
 
-        value,
+        pattern,
 
-        value,
+        pattern,
 
-        value,
+        pattern,
 
-        value,
-
-        value
-
-        )
+        pattern
 
         )
 
 
-        return self.cursor.fetchall()
-
-
-
-    ############################################################
-
-    def find_serial(
-            self,
-            serial):
-
-
-        self.cursor.execute(
-
-            """
-
-            SELECT *
-
-            FROM assets
-
-            WHERE serial=?
-
-            """,
-
-            (
-                serial,
-            )
-
         )
 
 
-        return self.cursor.fetchone()
+        rows = cur.fetchall()
 
 
-
-    ############################################################
-
-    def count(self):
+        conn.close()
 
 
-        self.cursor.execute(
-
-            """
-
-            SELECT COUNT(*)
-
-            FROM assets
-
-            """
-
-        )
-
-
-        return self.cursor.fetchone()[0]
-
-
-
-    ############################################################
-
-    def export_csv(
-            self,
-            filename):
-
-
-        import csv
-
-
-
-        rows = self.get_all()
-
-
-
-        with open(
-
-            filename,
-
-            "w",
-
-            newline="",
-
-            encoding="utf8"
-
-        ) as f:
-
-
-
-            writer = csv.writer(f)
-
-
-
-            writer.writerow(
-
-            [
-
-            "ID",
-
-            "DATA",
-
-            "TIPO",
-
-            "MARCA",
-
-            "MODELLO",
-
-            "SERIALE",
-
-            "CODICE",
-
-            "UTENTE",
-
-            "REPARTO",
-
-            "SEDE",
-
-            "NOTE",
-
-            "QR"
-
-            ]
-
-            )
-
-
-
-            writer.writerows(rows)
-
-
-
-    ############################################################
-
-    def close(self):
-
-
-        self.conn.close()
+        return rows
+        
