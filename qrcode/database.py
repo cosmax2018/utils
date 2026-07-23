@@ -111,11 +111,27 @@ class InventoryDatabase:
 
         cur = conn.cursor()
 
+        cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS qr_labels(
 
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            description TEXT NOT NULL,
+
+            serial TEXT,
+
+            image_file TEXT,
+
+            created TEXT,
+
+            updated TEXT
+        )
+        """
+        )        
 
         cur.execute(
         """
-
         CREATE TABLE IF NOT EXISTS assets
         (
 
@@ -165,6 +181,71 @@ class InventoryDatabase:
 
     ########################################################
 
+    def add_label(
+
+           self,
+
+           description,
+
+           serial,
+
+           image_file
+
+       ):
+
+       from datetime import datetime
+
+       conn = self.connect()
+
+       cur = conn.cursor()
+
+       now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+       cur.execute(
+
+           """
+           INSERT INTO qr_labels(
+
+               description,
+
+               serial,
+
+               image_file,
+
+               created,
+
+               updated
+
+           )
+
+           VALUES(?,?,?,?,?)
+
+           """,
+
+           (
+
+               description,
+
+               serial,
+
+               image_file,
+
+               now,
+
+               now
+
+           )
+
+       )
+
+       conn.commit()
+
+       label_id = cur.lastrowid
+
+       conn.close()
+
+       return label_id
+    
     def add_asset(
 
             self,
@@ -263,6 +344,69 @@ class InventoryDatabase:
 
 
     ########################################################
+    
+    def update_label(
+
+            self,
+
+            label_id,
+
+            description,
+
+            serial,
+
+            image_file
+
+        ):
+
+        from datetime import datetime
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+        now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        cur.execute(
+
+            """
+
+            UPDATE qr_labels
+
+            SET
+
+                description=?,
+
+                serial=?,
+
+                image_file=?,
+
+                updated=?
+
+            WHERE id=?
+
+            """,
+
+            (
+
+                description,
+
+                serial,
+
+                image_file,
+
+                now,
+
+                label_id
+
+            )
+
+        )
+
+        conn.commit()
+
+        conn.close()
+        
 
     def get_all(self):
 
@@ -291,6 +435,82 @@ class InventoryDatabase:
 
     ########################################################
 
+    def get_labels(self):
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+        cur.execute(
+
+            """
+
+            SELECT
+
+                id,
+                
+                description,
+                
+                serial,
+
+                image_file,
+                
+                created,
+
+                updated
+
+            FROM qr_labels
+
+            ORDER BY updated DESC
+
+            """
+
+        )
+
+        rows = cur.fetchall()
+
+        conn.close()
+
+        return rows
+    
+    def get_label(
+
+            self,
+
+            label_id
+
+        ):
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+        cur.execute(
+
+            """
+
+            SELECT *
+
+            FROM qr_labels
+
+            WHERE id=?
+
+            """,
+
+            (
+
+                label_id,
+
+            )
+
+        )
+
+        row = cur.fetchone()
+
+        conn.close()
+
+        return row
+    
     def get_asset(self, asset_id):
 
 
@@ -320,6 +540,62 @@ class InventoryDatabase:
 
     ########################################################
 
+    def search_labels(
+
+            self,
+
+            text
+
+        ):
+
+        conn = self.connect()
+
+        cur = conn.cursor()
+
+        cur.execute(
+
+            """
+
+            SELECT
+
+                id,
+
+                serial,
+
+                description,
+
+                updated
+
+            FROM qr_labels
+
+            WHERE
+
+                serial LIKE ?
+
+                OR
+
+                description LIKE ?
+
+            ORDER BY updated DESC
+
+            """,
+
+            (
+
+                "%" + text + "%",
+
+                "%" + text + "%"
+
+            )
+
+        )
+
+        rows = cur.fetchall()
+
+        conn.close()
+
+        return rows
+    
     def find_serial(self, serial):
 
 

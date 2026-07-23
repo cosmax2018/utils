@@ -25,6 +25,7 @@ from settings import Settings
 from label import LabelGenerator
 from theme import ThemeManager
 from validators import Validator
+from load_dialog import LoadDialog
 
 
 
@@ -45,10 +46,10 @@ class QRGeneratorApp(tk.Tk):
         )
 
 
-        self.geometry("525x660")
+        self.geometry("510x660")
 
         self.minsize(
-            525,
+            510,
             660
         )
 
@@ -78,6 +79,11 @@ class QRGeneratorApp(tk.Tk):
 
 
         self.current_image = None
+        #
+        # id dell'etichetta aperta
+        #
+
+        self.current_label_id = None        
 
         self.tk_image = None
 
@@ -92,6 +98,8 @@ class QRGeneratorApp(tk.Tk):
             self.resize_qr_preview
 
         )
+        
+
 
     ############################################################
 
@@ -523,7 +531,25 @@ class QRGeneratorApp(tk.Tk):
 
         )
 
+        self.btn_load = ttk.Button(
 
+            toolbar,
+
+            text="📂 Load",
+
+            command=self.load_label,
+
+            width=12
+
+        )
+
+        self.btn_load.pack(
+
+            side="left",
+
+            padx=3
+
+        )
 
         self.btn_save = ttk.Button(
 
@@ -531,7 +557,7 @@ class QRGeneratorApp(tk.Tk):
 
             text="💾 Salva",
 
-            command=self.save_png,
+            command=self.save_label,
 
             width=12
 
@@ -746,8 +772,67 @@ class QRGeneratorApp(tk.Tk):
 
         )
 
+    ############################################################
+    #
+    # CARICA IL QRCODE
+    #
+    ############################################################
 
+    def load_label(self):
 
+        dlg = LoadDialog(
+
+            self,
+
+            self.database
+
+        )
+
+        result = dlg.show()
+
+        if result is None:
+            return
+
+        #
+        # record selezionato
+        #
+
+        self.current_label_id = result[0]
+
+        description = result[1]
+
+        serial = result[2]
+
+        #
+        # riempie i campi
+        #
+
+        self.text_data.delete(
+            "1.0",
+            tk.END
+        )
+
+        self.text_data.insert(
+            tk.END,
+            description
+        )
+
+        self.text_serial.delete(
+            0,
+            tk.END
+        )
+
+        self.text_serial.insert(
+            0,
+            serial
+        )
+
+        #
+        # rigenera il QR
+        #
+
+        self.create_qr()
+    
     ############################################################
     #
     # SALVA PNG
@@ -755,11 +840,10 @@ class QRGeneratorApp(tk.Tk):
     ############################################################
 
 
-    def save_png(self):
+    def save_label(self):
 
 
         if self.current_image is None:
-
 
             messagebox.showwarning(
 
@@ -769,9 +853,7 @@ class QRGeneratorApp(tk.Tk):
 
             )
 
-
             return
-
 
 
         filename = filedialog.asksaveasfilename(
@@ -782,7 +864,7 @@ class QRGeneratorApp(tk.Tk):
 
                 (
 
-                    "Immagine PNG",
+                    "PNG",
 
                     "*.png"
 
@@ -793,28 +875,88 @@ class QRGeneratorApp(tk.Tk):
         )
 
 
+        if not filename:
 
-        if filename:
+            return
 
 
-            page = self.printer.create_label_image(
+        ##################################################
+        # crea etichetta completa
+        ##################################################
 
-                self.current_image,
+        label_image = self.printer.create_label_image(
 
-                self.qr_label.cget("text")
+            self.current_image,
+
+            self.qr_label.cget("text")
+
+        )
+
+
+        label_image.save(
+
+            filename
+
+        )
+
+
+        ##################################################
+        # dati
+        ##################################################
+
+        description = self.text_data.get(
+
+            "1.0",
+
+            tk.END
+
+        ).strip()
+
+
+        serial = self.text_serial.get().strip()
+
+
+        ##################################################
+        # INSERT o UPDATE
+        ##################################################
+
+        if self.current_label_id is None:
+
+
+            self.current_label_id = self.database.add_label(
+
+                description,
+
+                serial,
+
+                filename
 
             )
 
-            page.save(filename)
+
+        else:
 
 
-            messagebox.showinfo(
+            self.database.update_label(
 
-                "Salvataggio",
+                self.current_label_id,
 
-                "QR salvato correttamente"
+                description,
+
+                serial,
+
+                filename
 
             )
+
+
+        messagebox.showinfo(
+
+            "Salvataggio",
+
+            "Etichetta salvata correttamente"
+
+        )
 
 
 
