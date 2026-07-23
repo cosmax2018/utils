@@ -45,11 +45,11 @@ class QRGeneratorApp(tk.Tk):
         )
 
 
-        self.geometry("700x850")
+        self.geometry("525x660")
 
         self.minsize(
-            650,
-            750
+            525,
+            660
         )
 
 
@@ -85,7 +85,13 @@ class QRGeneratorApp(tk.Tk):
 
         self.create_gui()
 
+        self.qr_preview.bind(
 
+            "<Configure>",
+
+            self.resize_qr_preview
+
+        )
 
     ############################################################
 
@@ -286,12 +292,48 @@ class QRGeneratorApp(tk.Tk):
 
 
         main_frame = ttk.Frame(
-
             self.tab_qr
+        )
 
+        ##################################################
+        # FRAME INPUT
+        ##################################################
+
+        input_frame = ttk.Frame(main_frame)
+
+        input_frame.pack(
+            fill="x",
+            padx=10,
+            pady=(10,5)
         )
 
 
+        ##################################################
+        # FRAME TOOLBAR
+        ##################################################
+
+        toolbar_frame = ttk.Frame(main_frame)
+
+        toolbar_frame.pack(
+            fill="x",
+            padx=10,
+            pady=5
+        )
+
+
+        ##################################################
+        # FRAME PREVIEW
+        ##################################################
+
+        preview_frame = ttk.Frame(main_frame)
+
+        preview_frame.pack(
+            fill="both",
+            expand=True,
+            padx=10,
+            pady=(5,10)
+        )
+        
         main_frame.pack(
 
             fill="both",
@@ -305,6 +347,20 @@ class QRGeneratorApp(tk.Tk):
         )
 
 
+        main_frame.rowconfigure(0, weight=0)  # titolo dati
+        main_frame.rowconfigure(1, weight=3)  # textbox dati
+        main_frame.rowconfigure(2, weight=0)  # label seriale
+        main_frame.rowconfigure(3, weight=0)  # seriale
+        main_frame.rowconfigure(4, weight=0)  # titolo QR
+        main_frame.rowconfigure(5, weight=1)  # area QR
+        main_frame.rowconfigure(6, weight=0)  # descrizione QR
+        main_frame.rowconfigure(7, weight=0)  # pulsanti
+
+        main_frame.columnconfigure(0, weight=1)
+        main_frame.columnconfigure(1, weight=0)
+        main_frame.columnconfigure(2, weight=1)
+
+
 
         ##################################################
         # BOX DATI
@@ -312,63 +368,104 @@ class QRGeneratorApp(tk.Tk):
 
 
         ttk.Label(
-
-            main_frame,
-
-            text="Dati da codificare"
-
-        ).pack()
-
-
+            input_frame,
+            text="Dati da codificare:"
+        ).grid(
+            row=0,
+            column=0,
+            sticky="nw",
+            padx=(0,10)
+        )
 
         self.text_data = tk.Text(
-
-            main_frame,
-
-            height=8,
-
-            width=55
-
+            input_frame,
+            height=5,
+            width=35,
+            wrap="word"
         )
 
-
-        self.text_data.pack(
-
-            pady=10
-
+        self.text_data.grid(
+            row=0,
+            column=1,
+            sticky="w"
         )
-
 
 
         ##################################################
-        # ANTEPRIMA QR
+        # SERIAL NUMBER
         ##################################################
 
 
         ttk.Label(
+            input_frame,
+            text="Serial Number:"
+        ).grid(
+            row=1,
+            column=0,
+            sticky="w",
+            padx=(0,10),
+            pady=(10,0)
+        )
 
-            main_frame,
+        self.text_serial = tk.Entry(
+            input_frame,
+            width=35
+        )
+
+        self.text_serial.grid(
+            row=1,
+            column=1,
+            sticky="w",
+            pady=(10,0)
+        )
+
+
+
+        ##################################################
+        # PREVIEW FRAME
+        ##################################################
+
+        ttk.Label(
+
+            preview_frame,
 
             text="Anteprima QR Code"
 
         ).pack(
+            pady=(5,10)
+        )
 
-            pady=(10,5)
+
+        self.qr_frame = ttk.Frame(
+
+            preview_frame,
+
+            relief="solid",
+
+            borderwidth=1,
+
+            width=260,
+
+            height=260
 
         )
 
+        self.qr_frame.pack()
+
+        self.qr_frame.pack_propagate(False)
 
 
         self.qr_preview = ttk.Label(
 
-            main_frame
+            self.qr_frame,
+
+            text="QR CODE"
 
         )
 
-
         self.qr_preview.pack(
 
-            pady=10
+            expand=True
 
         )
 
@@ -378,29 +475,18 @@ class QRGeneratorApp(tk.Tk):
 
         self.qr_label = ttk.Label(
 
-            main_frame,
+            preview_frame,
 
             text="",
 
-            justify="center",
+            font=("Arial",11,"bold"),
 
-            font=(
-
-                "Arial",
-
-                12,
-
-                "bold"
-
-            )
+            justify="center"
 
         )
 
-
         self.qr_label.pack(
-
-            pady=5
-
+            pady=8
         )
 
         ##################################################
@@ -408,20 +494,13 @@ class QRGeneratorApp(tk.Tk):
         ##################################################
 
 
-        toolbar = ttk.Frame(
+        toolbar = toolbar_frame
 
-            main_frame
 
+        toolbar.columnconfigure(
+            0,
+            weight=1
         )
-
-
-        toolbar.pack(
-
-            pady=15
-
-        )
-
-
 
         self.btn_create = ttk.Button(
 
@@ -546,7 +625,7 @@ class QRGeneratorApp(tk.Tk):
     def create_qr(self):
 
 
-        text = self.text_data.get(
+        main_text = self.text_data.get(
 
             "1.0",
 
@@ -554,9 +633,17 @@ class QRGeneratorApp(tk.Tk):
 
         ).strip()
 
+        serial = self.text_serial.get().strip()
 
 
-        if not text:
+        text = main_text
+
+
+        if serial:
+
+            text += "\n\nSERIAL NUMBER: " + serial
+    
+        if not main_text and not serial:
 
 
             messagebox.showwarning(
@@ -614,9 +701,7 @@ class QRGeneratorApp(tk.Tk):
         ##################################################
 
 
-        preview = self.qr.resize(
-            280
-        )
+        preview = self.current_image
 
 
         self.tk_image = ImageTk.PhotoImage(
@@ -625,10 +710,10 @@ class QRGeneratorApp(tk.Tk):
 
         )
 
-
+        
         self.qr_preview.configure(
 
-            image=self.tk_image
+            image=self.tk_image,
 
         )
 
@@ -637,20 +722,15 @@ class QRGeneratorApp(tk.Tk):
         # testo descrittivo sotto QR
         ##################################################
 
-        lines = text.split("\n")
+        main_lines = main_text.split("\n")
 
+        preview_text = "\n".join(main_lines[:3])
 
-        preview_text = "\n".join(
-
-            lines[:4]
-
-        )
-
+        if serial:
+            preview_text += f"\n\nSN: {serial}"
 
         self.qr_label.configure(
-
             text=preview_text
-
         )
 
         ##################################################
@@ -804,9 +884,11 @@ class QRGeneratorApp(tk.Tk):
 
 
 
-        self.printer.print_image(
+        self.printer.print_label(
 
-            self.current_image
+            qr_image=self.current_image,
+
+            title=self.qr_label.cget("text")
 
         )
 
@@ -1271,4 +1353,59 @@ REPARTO: {asset[8]}
 
             )
 
-            
+    ############################################################
+    #
+    # RESIZING
+    #
+    ############################################################    
+
+    def resize_qr_preview(self, event):
+
+
+        if self.current_image is None:
+
+            return
+
+
+
+        size = min(
+            self.qr_frame.winfo_width(),
+            self.qr_frame.winfo_height(),
+            300
+        )
+
+
+
+        if size <= 20:
+
+            return
+
+
+
+        img = self.current_image.resize(
+
+            (
+
+                size,
+
+                size
+
+            )
+
+        )
+
+
+        self.tk_image = ImageTk.PhotoImage(
+
+            img
+
+        )
+
+
+        self.qr_preview.configure(
+
+            image=self.tk_image
+
+        )    
+        
+        
