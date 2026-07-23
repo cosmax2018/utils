@@ -797,11 +797,15 @@ class QRGeneratorApp(tk.Tk):
         if filename:
 
 
-            self.qr.save_png(
+            page = self.printer.create_label_image(
 
-                filename
+                self.current_image,
+
+                self.qr_label.cget("text")
 
             )
+
+            page.save(filename)
 
 
             messagebox.showinfo(
