@@ -20,10 +20,10 @@ class QRPrinter:
 
     ##########################################################
 
-    def create_label_image(self, qr_image, title):
+    def create_label_image(self, qr_image, title, font_size=24):
 
-        WIDTH = 700
-        HEIGHT = 950
+        WIDTH = 900
+        HEIGHT = 500
 
         page = Image.new(
             "RGB",
@@ -34,46 +34,86 @@ class QRPrinter:
         draw = ImageDraw.Draw(page)
 
         try:
-            font = ImageFont.truetype("arial.ttf", 24)
-        except:
-            font = ImageFont.load_default()
-
-        #
-        # QR
-        #
-
-        qr = qr_image.resize((350,350))
-
-        x = (WIDTH-350)//2
-
-        page.paste(qr, (x,40))
-
-        #
-        # Testo centrato
-        #
-
-        y = 430
-
-        for line in title.split("\n"):
-
-            bbox = draw.textbbox((0,0), line, font=font)
-
-            w = bbox[2]-bbox[0]
-
-            draw.text(
-                ((WIDTH-w)//2, y),
-                line,
-                fill="black",
-                font=font
+            font = ImageFont.truetype(
+                "arial.ttf",
+                font_size
             )
 
-            y += 35
+        except:
+
+            font = ImageFont.load_default()
+
+        ##########################################################
+        # QR a sinistra
+        ##########################################################
+
+        QR_SIZE = 300
+
+        qr = qr_image.resize(
+            (
+                QR_SIZE,
+                QR_SIZE
+            )
+        )
+
+        qr_x = 40
+        qr_y = (HEIGHT - QR_SIZE) // 2
+
+        page.paste(
+            qr,
+            (
+                qr_x,
+                qr_y
+            )
+        )
+
+        ##########################################################
+        # Testo a destra
+        ##########################################################
+
+        text_x = qr_x + QR_SIZE + 40
+
+        lines = title.split("\n")
+
+        line_height = font_size + 8
+
+        total_height = len(lines) * line_height
+
+        y = (HEIGHT - total_height) // 2
+
+        for line in lines:
+
+            draw.text(
+
+                (
+                    text_x,
+                    y
+                ),
+
+                line,
+
+                fill="black",
+
+                font=font
+
+            )
+
+            y += line_height
 
         return page
         
-    def print_label(self, qr_image, title):
+    def print_label(
+            self,
+            qr_image,
+            title,
+            font_size=24
+        ):
 
-        page = self.create_label_image(qr_image, title)
+        page = self.create_label_image(
+            qr_image,
+            title,
+            font_size
+        )
 
         filename = os.path.join(
             tempfile.gettempdir(),
