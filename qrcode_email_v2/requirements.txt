@@ -1,0 +1,4 @@
+Pillow>=10.0,<13
+qrcode>=7.4,<9
+pywin32>=306; sys_platform == "win32"
+reportlab>=4.0,<5
